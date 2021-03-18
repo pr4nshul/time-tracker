@@ -1,6 +1,6 @@
 # time_tracker1
 
-A new Flutter application.
+An application to keep track of your taska and time
 
 ## Getting Started
 
