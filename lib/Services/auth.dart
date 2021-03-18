@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 abstract class AuthBase{
+  Stream<UserUid> get onAuthStateChanged;
   Future<void> signOut();
   Future<UserUid> signInAnonymously();
   UserUid currentUser();
@@ -17,6 +18,10 @@ class Auth implements AuthBase{
       return null;
     }
     return UserUid(userUid: user.uid);
+  }
+  @override
+  Stream <UserUid> get onAuthStateChanged{
+    return FirebaseAuth.instance.authStateChanges().map(returnUser);
   }
   @override
   Future<UserUid> signInAnonymously() async {

@@ -1,6 +1,6 @@
 # time_tracker1
 
-An application to keep track of your taska and time
+An application to keep track of your tasks and time
 
 ## Getting Started
 
