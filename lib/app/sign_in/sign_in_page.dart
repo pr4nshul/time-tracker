@@ -1,17 +1,26 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:time_tracker1/Services/auth.dart';
+import 'package:time_tracker1/app/sign_in/email_sign_in_page.dart';
 import 'package:time_tracker1/app/sign_in/socialSignInButton.dart';
 import 'customSignInButton.dart';
 
 class SignInPage extends StatelessWidget {
-  SignInPage({ @required this.auth});
+  SignInPage({@required this.auth});
 
   final AuthBase auth;
 
   Future<void> _signInAnonymously() async {
     try {
       await auth.signInAnonymously();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> _signInGoogle() async {
+    try {
+      await auth.signInGoogle();
     } catch (e) {
       print(e.toString());
     }
@@ -54,7 +63,7 @@ class SignInPage extends StatelessWidget {
               text: "Sign in with Google",
               borderRadius: 8.0,
               textColor: Colors.black87,
-              onPressed: () {},
+              onPressed: _signInGoogle,
               color: Colors.white,
             ),
             SizedBox(
@@ -62,10 +71,10 @@ class SignInPage extends StatelessWidget {
             ),
             SocialSignInButton(
               assetName: "images/facebook-logo.png",
-              text: "Sign in with Facebook",
+              text: "Sign in with Facebook(disabled)",
               borderRadius: 8.0,
               textColor: Colors.white,
-              onPressed: () {},
+              onPressed: null,
               color: Colors.blue,
             ),
             SizedBox(
@@ -75,7 +84,26 @@ class SignInPage extends StatelessWidget {
               text: "Sign in with Email",
               borderRadius: 8.0,
               textColor: Colors.white,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) {
+                      return Scaffold(
+                        appBar: AppBar(
+                          title: Text("Sign In"),
+                          centerTitle: true,
+                        ),
+                        body: SingleChildScrollView(
+                          child: Center(
+                            child: EmailSignIn(auth: auth,),
+                          ),
+                        ),
+                      );
+                    },
+                    fullscreenDialog: true,
+                  ),
+                );
+              },
               color: Colors.teal[600],
             ),
             SizedBox(
