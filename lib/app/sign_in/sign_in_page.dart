@@ -1,16 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker1/Services/auth.dart';
 import 'package:time_tracker1/app/sign_in/email_sign_in_page.dart';
 import 'package:time_tracker1/app/sign_in/socialSignInButton.dart';
 import 'customSignInButton.dart';
 
 class SignInPage extends StatelessWidget {
-  SignInPage({@required this.auth});
-
-  final AuthBase auth;
-
-  Future<void> _signInAnonymously() async {
+  Future<void> _signInAnonymously(BuildContext context) async {
+    final AuthBase auth = Provider.of<AuthBase>(context,listen: false);
     try {
       await auth.signInAnonymously();
     } catch (e) {
@@ -18,7 +16,8 @@ class SignInPage extends StatelessWidget {
     }
   }
 
-  Future<void> _signInGoogle() async {
+  Future<void> _signInGoogle(BuildContext context) async {
+    final AuthBase auth = Provider.of<AuthBase>(context,listen: false);
     try {
       await auth.signInGoogle();
     } catch (e) {
@@ -63,7 +62,7 @@ class SignInPage extends StatelessWidget {
               text: "Sign in with Google",
               borderRadius: 8.0,
               textColor: Colors.black87,
-              onPressed: _signInGoogle,
+              onPressed: () => _signInGoogle(context),
               color: Colors.white,
             ),
             SizedBox(
@@ -95,7 +94,7 @@ class SignInPage extends StatelessWidget {
                         ),
                         body: SingleChildScrollView(
                           child: Center(
-                            child: EmailSignIn(auth: auth,),
+                            child: EmailSignIn(),
                           ),
                         ),
                       );
@@ -122,7 +121,7 @@ class SignInPage extends StatelessWidget {
               text: "Go anonymous",
               borderRadius: 8.0,
               textColor: Colors.white,
-              onPressed: _signInAnonymously,
+              onPressed: () => _signInAnonymously(context),
               color: Colors.purple[300],
             ),
           ],

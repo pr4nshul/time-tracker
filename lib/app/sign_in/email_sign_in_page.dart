@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker1/Services/auth.dart';
 import 'package:time_tracker1/common_widgets/alert_dialog.dart';
 
 class EmailSignIn extends StatefulWidget {
-  EmailSignIn({@required this.auth});
 
-  final AuthBase auth;
 
   @override
   _EmailSignInState createState() => _EmailSignInState();
@@ -32,11 +31,12 @@ class _EmailSignInState extends State<EmailSignIn> {
       _isLoading = true;
       _submitted = true;
     });
+    final AuthBase auth = Provider.of<AuthBase>(context,listen: false);
     try {
       if (_currentState == emailSignIn.SignIn) {
-        await widget.auth.signInWithEmail(_email, _password);
+        await auth.signInWithEmail(_email, _password);
       } else {
-        await widget.auth.createWithEmail(_email, _password);
+        await auth.createWithEmail(_email, _password);
       }
       Navigator.of(context).pop();
     } catch (e) {
