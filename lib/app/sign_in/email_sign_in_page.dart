@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:time_tracker1/Services/auth.dart';
+import 'package:time_tracker1/common_widgets/alert_dialog.dart';
 
 class EmailSignIn extends StatefulWidget {
   EmailSignIn({@required this.auth});
@@ -39,7 +40,12 @@ class _EmailSignInState extends State<EmailSignIn> {
       }
       Navigator.of(context).pop();
     } catch (e) {
-      print(e.toString());
+      PlatformAlertDialog(
+        title: "Sign In Failed!",
+        content: e.toString(),
+        actionText: 'OK',
+      ).show(context);
+      //print(e.toString());
     } finally {
       setState(() {
         _isLoading = false;
@@ -75,7 +81,8 @@ class _EmailSignInState extends State<EmailSignIn> {
         decoration: InputDecoration(
           labelText: "Email",
           hintText: "test@test.com",
-          errorText: _email.isEmpty &&_submitted ? "Email can't be empty" : null,
+          errorText:
+              _email.isEmpty && _submitted ? "Email can't be empty" : null,
         ),
         onChanged: (email) => _updateState(),
         autocorrect: false,
@@ -89,7 +96,9 @@ class _EmailSignInState extends State<EmailSignIn> {
         controller: _passwordController,
         decoration: InputDecoration(
           labelText: "Password",
-          errorText: _password.isEmpty &&_submitted ? "Password can't be empty" : null,
+          errorText: _password.isEmpty && _submitted
+              ? "Password can't be empty"
+              : null,
         ),
         onChanged: (password) => _updateState(),
         obscureText: true,
