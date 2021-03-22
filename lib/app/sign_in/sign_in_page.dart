@@ -1,27 +1,56 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker1/Services/auth.dart';
 import 'package:time_tracker1/app/sign_in/email_sign_in_page.dart';
 import 'package:time_tracker1/app/sign_in/socialSignInButton.dart';
+import 'package:time_tracker1/common_widgets/platform_exception_alert_dialog.dart';
 import 'customSignInButton.dart';
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends StatefulWidget {
+  @override
+  _SignInPageState createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  bool _isLoading = false;
+
   Future<void> _signInAnonymously(BuildContext context) async {
-    final AuthBase auth = Provider.of<AuthBase>(context,listen: false);
+    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     try {
+      setState(() {
+        _isLoading = true;
+      });
       await auth.signInAnonymously();
-    } catch (e) {
-      print(e.toString());
+    } on PlatformException catch (e) {
+      PlatformExceptionAlertDialog(
+        title: "Sign In Failed!",
+        exception: e,
+      ).show(context);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
   Future<void> _signInGoogle(BuildContext context) async {
-    final AuthBase auth = Provider.of<AuthBase>(context,listen: false);
+    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     try {
+      setState(() {
+        _isLoading = true;
+      });
       await auth.signInGoogle();
-    } catch (e) {
-      print(e.toString());
+    } on PlatformException catch (e) {
+      PlatformExceptionAlertDialog(
+        title: "Sign In Failed!",
+        exception: e,
+      ).show(context);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -46,13 +75,15 @@ class SignInPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Center(
-              child: Text(
-                "Sign In",
-                style: TextStyle(
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
+              child: _isLoading
+                  ? CircularProgressIndicator()
+                  : Text(
+                      "Sign In",
+                      style: TextStyle(
+                        fontSize: 32.0,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
             ),
             SizedBox(
               height: 20.0,
@@ -62,20 +93,20 @@ class SignInPage extends StatelessWidget {
               text: "Sign in with Google",
               borderRadius: 8.0,
               textColor: Colors.black87,
-              onPressed: () => _signInGoogle(context),
+              onPressed: _isLoading ? null : () => _signInGoogle(context),
               color: Colors.white,
             ),
-            SizedBox(
-              height: 10,
-            ),
-            SocialSignInButton(
-              assetName: "images/facebook-logo.png",
-              text: "Sign in with Facebook(disabled)",
-              borderRadius: 8.0,
-              textColor: Colors.white,
-              onPressed: null,
-              color: Colors.blue,
-            ),
+            // SizedBox(
+            //   height: 10,
+            // ),
+            // SocialSignInButton(
+            //   assetName: "images/facebook-logo.png",
+            //   text: "Sign in with Facebook(disabled)",
+            //   borderRadius: 8.0,
+            //   textColor: Colors.white,
+            //   onPressed: null,
+            //   color: Colors.blue,
+            // ),
             SizedBox(
               height: 10.0,
             ),
@@ -83,26 +114,28 @@ class SignInPage extends StatelessWidget {
               text: "Sign in with Email",
               borderRadius: 8.0,
               textColor: Colors.white,
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (context) {
-                      return Scaffold(
-                        appBar: AppBar(
-                          title: Text("Sign In"),
-                          centerTitle: true,
-                        ),
-                        body: SingleChildScrollView(
-                          child: Center(
-                            child: EmailSignIn(),
-                          ),
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (context) {
+                            return Scaffold(
+                              appBar: AppBar(
+                                title: Text("Sign In"),
+                                centerTitle: true,
+                              ),
+                              body: SingleChildScrollView(
+                                child: Center(
+                                  child: EmailSignIn(),
+                                ),
+                              ),
+                            );
+                          },
+                          fullscreenDialog: true,
                         ),
                       );
                     },
-                    fullscreenDialog: true,
-                  ),
-                );
-              },
               color: Colors.teal[600],
             ),
             SizedBox(
@@ -121,7 +154,7 @@ class SignInPage extends StatelessWidget {
               text: "Go anonymous",
               borderRadius: 8.0,
               textColor: Colors.white,
-              onPressed: () => _signInAnonymously(context),
+              onPressed: _isLoading ? null : () => _signInAnonymously(context),
               color: Colors.purple[300],
             ),
           ],

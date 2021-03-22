@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker1/Services/auth.dart';
 import 'package:time_tracker1/common_widgets/alert_dialog.dart';
+
 
 class EmailSignIn extends StatefulWidget {
 
@@ -25,7 +27,12 @@ class _EmailSignInState extends State<EmailSignIn> {
 
   bool _isLoading = false;
   bool _submitted = false;
-
+  @override
+  void dispose(){
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
   void _submit() async {
     setState(() {
       _isLoading = true;
@@ -40,6 +47,7 @@ class _EmailSignInState extends State<EmailSignIn> {
       }
       Navigator.of(context).pop();
     } catch (e) {
+
       PlatformAlertDialog(
         title: "Sign In Failed!",
         content: e.toString(),

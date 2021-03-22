@@ -21,6 +21,7 @@ class CustomRaisedButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       color: color,
+      disabledColor: color,
       child: child,
       onPressed: onPressed,
       padding: EdgeInsets.all(padding),
