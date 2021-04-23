@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:time_tracker1/common_widgets/platform_widget.dart';
 
 class PlatformAlertDialog extends PlatformWidget {
@@ -49,7 +48,6 @@ class PlatformAlertDialog extends PlatformWidget {
         child: Text(actionText),
       ),
     );
-
     return actions;
   }
 }

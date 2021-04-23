@@ -47,7 +47,6 @@ class _EmailSignInState extends State<EmailSignIn> {
       }
       Navigator.of(context).pop();
     } catch (e) {
-
       PlatformAlertDialog(
         title: "Sign In Failed!",
         content: e.toString(),
@@ -149,15 +148,17 @@ class _EmailSignInState extends State<EmailSignIn> {
   Widget build(BuildContext context) {
     String _email = _emailController.text;
     String _password = _passwordController.text;
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: _buildContent(),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: _buildContent(),
+            ),
           ),
         ),
       ),
