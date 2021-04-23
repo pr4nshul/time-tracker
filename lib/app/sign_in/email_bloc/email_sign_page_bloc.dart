@@ -5,7 +5,7 @@ import 'package:time_tracker1/Services/auth.dart';
 import 'package:time_tracker1/app/sign_in/email_bloc/email_sign_in_bloc.dart';
 import 'package:time_tracker1/app/sign_in/email_bloc/email_sign_in_model.dart';
 import 'package:time_tracker1/common_widgets/alert_dialog.dart';
-
+//saving blocs in another branch
 class EmailSignInWithBloc extends StatefulWidget {
   EmailSignInWithBloc({@required this.bloc1});
 
