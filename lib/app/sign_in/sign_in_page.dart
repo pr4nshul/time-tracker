@@ -3,31 +3,37 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker1/Services/auth.dart';
 import 'package:time_tracker1/app/sign_in/email_bloc/email_sign_page_bloc.dart';
+import 'package:time_tracker1/app/sign_in/email_bloc/email_sign_page_change_model.dart';
+import 'package:time_tracker1/app/sign_in/email_bloc/sign_in_manager.dart';
 import 'package:time_tracker1/app/sign_in/email_sign_in_page.dart';
-import 'file:///E:/time/time_tracker1/lib/app/sign_in/email_bloc/sign_in_bloc.dart';
+import 'package:time_tracker1/app/sign_in/email_bloc/sign_in_manager.dart';
 import 'package:time_tracker1/app/sign_in/socialSignInButton.dart';
 import 'package:time_tracker1/common_widgets/platform_exception_alert_dialog.dart';
 import 'customSignInButton.dart';
 
 class SignInPage extends StatelessWidget {
-  SignInPage({@required this.bloc});
+  SignInPage({@required this.manager,@required this.isLoading});
 
-  final SignInBloc bloc;
-
+  final SignInManager manager;
+  final bool isLoading;
   static Widget create(BuildContext context) {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
-    return Provider<SignInBloc>(
-      create: (context) => SignInBloc(auth: auth),
-      dispose: (context, bloc) => bloc.dispose(),
-      child: Consumer<SignInBloc>(
-        builder: (context, bloc, _) => SignInPage(bloc: bloc),
+    return ChangeNotifierProvider<ValueNotifier<bool>>(
+      create: (_) => ValueNotifier<bool>(false),
+      child: Consumer<ValueNotifier<bool>>(
+        builder: (_, isLoading, __) => Provider<SignInManager>(
+          create: (context) => SignInManager(auth: auth, isLoading: isLoading),
+          child: Consumer<SignInManager>(
+            builder: (context, manager, _) => SignInPage(manager: manager,isLoading: isLoading.value,),
+          ),
+        ),
       ),
     );
   }
 
   Future<void> _signInAnonymously(BuildContext context) async {
     try {
-      await bloc.signInAnonymously();
+      await manager.signInAnonymously();
     } on PlatformException catch (e) {
       PlatformExceptionAlertDialog(
         title: "Sign In Failed!",
@@ -38,7 +44,7 @@ class SignInPage extends StatelessWidget {
 
   Future<void> _signInGoogle(BuildContext context) async {
     try {
-      await bloc.signInGoogle();
+      await manager.signInGoogle();
     } on PlatformException catch (e) {
       PlatformExceptionAlertDialog(
         title: "Sign In Failed!",
@@ -61,18 +67,14 @@ class SignInPage extends StatelessWidget {
         centerTitle: true,
       ),
       backgroundColor: Colors.grey[50],
-      body: StreamBuilder<bool>(
-          stream: bloc.isLoadingController,
-          initialData: false,
-          builder: (context, snapshot) {
-            return Padding(
+      body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Center(
-                    child: snapshot.data
+                    child: isLoading
                         ? CircularProgressIndicator()
                         : Text(
                             "Sign In",
@@ -91,7 +93,7 @@ class SignInPage extends StatelessWidget {
                     borderRadius: 8.0,
                     textColor: Colors.black87,
                     onPressed:
-                        snapshot.data ? null : () => _signInGoogle(context),
+                        isLoading ? null : () => _signInGoogle(context),
                     color: Colors.white,
                   ),
                   // SizedBox(
@@ -112,7 +114,7 @@ class SignInPage extends StatelessWidget {
                     text: "Sign in with Email",
                     borderRadius: 8.0,
                     textColor: Colors.white,
-                    onPressed: snapshot.data
+                    onPressed: isLoading
                         ? null
                         : () {
                             Navigator.of(context).push(
@@ -126,7 +128,7 @@ class SignInPage extends StatelessWidget {
                                     body: SingleChildScrollView(
                                       child: Center(
                                         child:
-                                            EmailSignInWithBloc.create(context),
+                                            EmailSignInWithChangeModel.create(context),
                                       ),
                                     ),
                                   );
@@ -154,15 +156,14 @@ class SignInPage extends StatelessWidget {
                     text: "Go anonymous",
                     borderRadius: 8.0,
                     textColor: Colors.white,
-                    onPressed: snapshot.data
+                    onPressed: isLoading
                         ? null
                         : () => _signInAnonymously(context),
                     color: Colors.purple[300],
                   ),
                 ],
               ),
-            );
-          }),
+            )
     );
   }
 }
